@@ -1,0 +1,6 @@
+{
+  "name": "dialogue-server",
+  "tree": {
+    "$path": "src"
+  }
+}
