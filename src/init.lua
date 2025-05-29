@@ -1,7 +1,8 @@
 --!strict
 
-local IDialogue = require(script.Parent["dialogue-types"]);
-local IDialogueServer = require(script.Parent["dialogue-server-types"]);
+local packages = script.Parent.roblox_packages;
+local IDialogue = require(packages.dialogue_types);
+local IDialogueServer = require(packages.dialogue_server_types);
 
 type Dialogue = IDialogue.Dialogue;
 type DialogueServer = IDialogueServer.DialogueServer;
