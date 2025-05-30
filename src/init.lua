@@ -2,14 +2,14 @@
 
 local packages = script.Parent.roblox_packages;
 local IDialogue = require(packages.dialogue_types);
-local IDialogueServer = require(packages.dialogue_server_types);
+local IConversation = require(packages.conversation_types);
 
 type Dialogue = IDialogue.Dialogue;
-type DialogueServer = IDialogueServer.DialogueServer;
-type DialogueServerSettings = IDialogueServer.DialogueServerSettings;
-type OptionalDialogueServerSettings = IDialogueServer.OptionalDialogueServerSettings;
+type Conversation = IConversation.Conversation;
+type ConversationSettings = IConversation.ConversationSettings;
+type OptionalConversationSettings = IConversation.OptionalConversationSettings;
 
-local DialogueServer = {
+local Conversation = {
   defaultSettings = {
     general = {
       name = nil;
@@ -38,49 +38,49 @@ local DialogueServer = {
       billboardGUI = nil;
       adornee = nil;
     };
-  } :: DialogueServerSettings;
+  } :: ConversationSettings;
 };
 
-function DialogueServer.new(dialogueServerSettings: OptionalDialogueServerSettings?, moduleScript: ModuleScript): DialogueServer
+function Conversation.new(dialogueServerSettings: OptionalConversationSettings?, moduleScript: ModuleScript): Conversation
 
   local settingsChangedEvent = Instance.new("BindableEvent");
-  local settings: DialogueServerSettings = {
+  local settings: ConversationSettings = {
     general = {
-      name = if dialogueServerSettings and dialogueServerSettings.general then dialogueServerSettings.general.name else DialogueServer.defaultSettings.general.name;
-      theme = if dialogueServerSettings and dialogueServerSettings.general then dialogueServerSettings.general.theme else DialogueServer.defaultSettings.general.theme;
-      shouldFreezePlayer = if dialogueServerSettings and dialogueServerSettings.general and dialogueServerSettings.general.shouldFreezePlayer ~= nil then dialogueServerSettings.general.shouldFreezePlayer else DialogueServer.defaultSettings.general.shouldFreezePlayer; 
+      name = if dialogueServerSettings and dialogueServerSettings.general then dialogueServerSettings.general.name else Conversation.defaultSettings.general.name;
+      theme = if dialogueServerSettings and dialogueServerSettings.general then dialogueServerSettings.general.theme else Conversation.defaultSettings.general.theme;
+      shouldFreezePlayer = if dialogueServerSettings and dialogueServerSettings.general and dialogueServerSettings.general.shouldFreezePlayer ~= nil then dialogueServerSettings.general.shouldFreezePlayer else Conversation.defaultSettings.general.shouldFreezePlayer; 
     };
     distance = {
-      relativePart = if dialogueServerSettings and dialogueServerSettings.distance and dialogueServerSettings.distance.relativePart then dialogueServerSettings.distance.relativePart else DialogueServer.defaultSettings.distance.relativePart; 
-      maxConversationDistance = if dialogueServerSettings and dialogueServerSettings.distance and dialogueServerSettings.distance.maxConversationDistance then dialogueServerSettings.distance.maxConversationDistance else DialogueServer.defaultSettings.distance.maxConversationDistance; 
+      relativePart = if dialogueServerSettings and dialogueServerSettings.distance and dialogueServerSettings.distance.relativePart then dialogueServerSettings.distance.relativePart else Conversation.defaultSettings.distance.relativePart; 
+      maxConversationDistance = if dialogueServerSettings and dialogueServerSettings.distance and dialogueServerSettings.distance.maxConversationDistance then dialogueServerSettings.distance.maxConversationDistance else Conversation.defaultSettings.distance.maxConversationDistance; 
     };
     promptRegion = {
-      basePart = if dialogueServerSettings and dialogueServerSettings.promptRegion then dialogueServerSettings.promptRegion.basePart else DialogueServer.defaultSettings.promptRegion.basePart; 
+      basePart = if dialogueServerSettings and dialogueServerSettings.promptRegion then dialogueServerSettings.promptRegion.basePart else Conversation.defaultSettings.promptRegion.basePart; 
     };
     clickDetector = { 
-      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.clickDetector and dialogueServerSettings.clickDetector.shouldAutoCreate ~= nil then dialogueServerSettings.clickDetector.shouldAutoCreate else DialogueServer.defaultSettings.clickDetector.shouldAutoCreate; 
-      shouldDisappearDuringConversation = if dialogueServerSettings and dialogueServerSettings.clickDetector and dialogueServerSettings.clickDetector.shouldDisappearDuringConversation ~= nil then dialogueServerSettings.clickDetector.shouldDisappearDuringConversation else DialogueServer.defaultSettings.clickDetector.shouldDisappearDuringConversation; 
-      instance = if dialogueServerSettings and dialogueServerSettings.clickDetector then dialogueServerSettings.clickDetector.instance else DialogueServer.defaultSettings.clickDetector.instance;
+      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.clickDetector and dialogueServerSettings.clickDetector.shouldAutoCreate ~= nil then dialogueServerSettings.clickDetector.shouldAutoCreate else Conversation.defaultSettings.clickDetector.shouldAutoCreate; 
+      shouldDisappearDuringConversation = if dialogueServerSettings and dialogueServerSettings.clickDetector and dialogueServerSettings.clickDetector.shouldDisappearDuringConversation ~= nil then dialogueServerSettings.clickDetector.shouldDisappearDuringConversation else Conversation.defaultSettings.clickDetector.shouldDisappearDuringConversation; 
+      instance = if dialogueServerSettings and dialogueServerSettings.clickDetector then dialogueServerSettings.clickDetector.instance else Conversation.defaultSettings.clickDetector.instance;
     };
     proximityPrompt = { 
-      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.proximityPrompt and dialogueServerSettings.proximityPrompt.shouldAutoCreate ~= nil then dialogueServerSettings.proximityPrompt.shouldAutoCreate else DialogueServer.defaultSettings.proximityPrompt.shouldAutoCreate; 
-      instance = if dialogueServerSettings and dialogueServerSettings.proximityPrompt then dialogueServerSettings.proximityPrompt.instance else DialogueServer.defaultSettings.proximityPrompt.instance; 
+      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.proximityPrompt and dialogueServerSettings.proximityPrompt.shouldAutoCreate ~= nil then dialogueServerSettings.proximityPrompt.shouldAutoCreate else Conversation.defaultSettings.proximityPrompt.shouldAutoCreate; 
+      instance = if dialogueServerSettings and dialogueServerSettings.proximityPrompt then dialogueServerSettings.proximityPrompt.instance else Conversation.defaultSettings.proximityPrompt.instance; 
     };
     speechBubble = {
-      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.shouldAutoCreate ~= nil then dialogueServerSettings.speechBubble.shouldAutoCreate else DialogueServer.defaultSettings.speechBubble.shouldAutoCreate; 
-      billboardGUI = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.billboardGUI ~= nil then dialogueServerSettings.speechBubble.billboardGUI else DialogueServer.defaultSettings.speechBubble.billboardGUI;
-      button = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.button ~= nil then dialogueServerSettings.speechBubble.button else DialogueServer.defaultSettings.speechBubble.button;
-      adornee = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.adornee ~= nil then dialogueServerSettings.speechBubble.adornee else DialogueServer.defaultSettings.speechBubble.adornee;
+      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.shouldAutoCreate ~= nil then dialogueServerSettings.speechBubble.shouldAutoCreate else Conversation.defaultSettings.speechBubble.shouldAutoCreate; 
+      billboardGUI = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.billboardGUI ~= nil then dialogueServerSettings.speechBubble.billboardGUI else Conversation.defaultSettings.speechBubble.billboardGUI;
+      button = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.button ~= nil then dialogueServerSettings.speechBubble.button else Conversation.defaultSettings.speechBubble.button;
+      adornee = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.adornee ~= nil then dialogueServerSettings.speechBubble.adornee else Conversation.defaultSettings.speechBubble.adornee;
     }
   };
 
-  local function getSettings(self: DialogueServer): DialogueServerSettings
+  local function getSettings(self: Conversation): ConversationSettings
 
     return table.clone(settings);
 
   end;
 
-  local function getChildren(self: DialogueServer): {Dialogue}
+  local function getChildren(self: Conversation): {Dialogue}
 
     local children = {};
     for _, child in moduleScript:GetChildren() do
@@ -98,14 +98,14 @@ function DialogueServer.new(dialogueServerSettings: OptionalDialogueServerSettin
 
   end;
 
-  local function setSettings(self: DialogueServer, newSettings: DialogueServerSettings): ()
+  local function setSettings(self: Conversation, newSettings: ConversationSettings): ()
 
     settings = newSettings;
     settingsChangedEvent:Fire(newSettings);
 
   end;
 
-  local dialogueServer: DialogueServer = {
+  local dialogueServer: Conversation = {
     getChildren = getChildren;
     getSettings = getSettings;
     setSettings = setSettings;
@@ -116,4 +116,4 @@ function DialogueServer.new(dialogueServerSettings: OptionalDialogueServerSettin
 
 end;
 
-return DialogueServer;
+return Conversation;
