@@ -1,13 +1,12 @@
 --!strict
 
 local packages = script.Parent.roblox_packages;
-local IDialogue = require(packages.dialogue_types);
-local IConversation = require(packages.conversation_types);
+local DialogueMakerTypes = require(packages.dialogue_maker_types);
 
-type Dialogue = IDialogue.Dialogue;
-type Conversation = IConversation.Conversation;
-type ConversationSettings = IConversation.ConversationSettings;
-type OptionalConversationSettings = IConversation.OptionalConversationSettings;
+type Dialogue = DialogueMakerTypes.Dialogue;
+type Conversation = DialogueMakerTypes.Conversation;
+type ConversationSettings = DialogueMakerTypes.ConversationSettings;
+type OptionalConversationSettings = DialogueMakerTypes.OptionalConversationSettings;
 
 local Conversation = {
   defaultSettings = {
@@ -113,6 +112,24 @@ function Conversation.new(dialogueServerSettings: OptionalConversationSettings?,
   };
 
   return dialogueServer;
+
+end;
+
+function Conversation.getFromDialogue(dialogue: Dialogue): Conversation
+
+  local conversationModuleScript: ModuleScript?;
+  local currentModuleScript = dialogue.moduleScript;
+  repeat
+
+    conversationModuleScript = currentModuleScript:FindFirstAncestorOfClass("ModuleScript");
+
+  until not conversationModuleScript or conversationModuleScript:HasTag("DialogueMakerConversation");
+
+  assert(conversationModuleScript, `[Dialogue Maker] Dialogue is missing an ancestor with a Conversation object.`);
+
+  local conversation = require(conversationModuleScript) :: Conversation;
+
+  return conversation;
 
 end;
 
