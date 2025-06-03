@@ -91,7 +91,7 @@ function Conversation.new(dialogueServerSettings: OptionalConversationSettings?,
 
   end;
 
-  local function findNextVerifiedDialogue(self: Dialogue): Dialogue?
+  local function findNextVerifiedDialogue(self: Conversation): Dialogue?
 
     if self.type == "Redirect" then
 
