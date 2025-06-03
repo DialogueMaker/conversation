@@ -10,14 +10,11 @@ type OptionalConversationSettings = DialogueMakerTypes.OptionalConversationSetti
 
 local Conversation = {
   defaultSettings = {
-    general = {
+    speaker = {
       name = nil;
-      theme = nil;
-      shouldFreezePlayer = true;
     };
-    distance = {
-      relativePart = nil;
-      maxConversationDistance = nil;
+    theme = {
+      moduleScript = nil;
     };
     promptRegion = {
       basePart = nil; 
@@ -44,14 +41,11 @@ function Conversation.new(dialogueServerSettings: OptionalConversationSettings?,
 
   local settingsChangedEvent = Instance.new("BindableEvent");
   local settings: ConversationSettings = {
-    general = {
-      name = if dialogueServerSettings and dialogueServerSettings.general then dialogueServerSettings.general.name else Conversation.defaultSettings.general.name;
-      theme = if dialogueServerSettings and dialogueServerSettings.general then dialogueServerSettings.general.theme else Conversation.defaultSettings.general.theme;
-      shouldFreezePlayer = if dialogueServerSettings and dialogueServerSettings.general and dialogueServerSettings.general.shouldFreezePlayer ~= nil then dialogueServerSettings.general.shouldFreezePlayer else Conversation.defaultSettings.general.shouldFreezePlayer; 
+    speaker = {
+      name = if dialogueServerSettings and dialogueServerSettings.speaker then dialogueServerSettings.speaker.name else Conversation.defaultSettings.speaker.name;
     };
-    distance = {
-      relativePart = if dialogueServerSettings and dialogueServerSettings.distance and dialogueServerSettings.distance.relativePart then dialogueServerSettings.distance.relativePart else Conversation.defaultSettings.distance.relativePart; 
-      maxConversationDistance = if dialogueServerSettings and dialogueServerSettings.distance and dialogueServerSettings.distance.maxConversationDistance then dialogueServerSettings.distance.maxConversationDistance else Conversation.defaultSettings.distance.maxConversationDistance; 
+    theme = {
+      moduleScript = if dialogueServerSettings and dialogueServerSettings.theme then dialogueServerSettings.theme.moduleScript else Conversation.defaultSettings.theme.moduleScript;
     };
     promptRegion = {
       basePart = if dialogueServerSettings and dialogueServerSettings.promptRegion then dialogueServerSettings.promptRegion.basePart else Conversation.defaultSettings.promptRegion.basePart; 
