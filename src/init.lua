@@ -91,6 +91,42 @@ function Conversation.new(dialogueServerSettings: OptionalConversationSettings?,
 
   end;
 
+  local function findNextVerifiedDialogue(self: Dialogue): Dialogue?
+
+    if self.type == "Redirect" then
+
+      local redirectObjectValue = moduleScript:FindFirstChild("Redirect");
+      assert(redirectObjectValue and redirectObjectValue:IsA("ObjectValue"), "[Dialogue Maker] Redirect object value not found.");
+
+      local redirectModuleScript = redirectObjectValue.Value;
+      assert(redirectModuleScript and redirectModuleScript:IsA("ModuleScript"), "[Dialogue Maker] Redirect object value is not a ModuleScript.");
+
+      local redirectDialogue = require(redirectModuleScript) :: Dialogue;
+      if redirectDialogue:verifyCondition() then
+
+        return redirectDialogue;
+
+      end;
+
+    else 
+
+      local children = self:getChildren();
+      for _, child in children do
+
+        if child:verifyCondition() then
+
+          return child;
+
+        end
+
+      end
+
+    end;
+
+    return nil;
+
+  end;
+
   local function setSettings(self: Conversation, newSettings: ConversationSettings): ()
 
     settings = newSettings;
@@ -102,6 +138,7 @@ function Conversation.new(dialogueServerSettings: OptionalConversationSettings?,
     getChildren = getChildren;
     getSettings = getSettings;
     setSettings = setSettings;
+    findNextVerifiedDialogue = findNextVerifiedDialogue;
     moduleScript = moduleScript;
   };
 
