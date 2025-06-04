@@ -93,35 +93,16 @@ function Conversation.new(dialogueServerSettings: OptionalConversationSettings?,
 
   local function findNextVerifiedDialogue(self: Conversation): Dialogue?
 
-    if self.type == "Redirect" then
+    local children = self:getChildren();
+    for _, child in children do
+      
+      if child:verifyCondition() then
 
-      local redirectObjectValue = moduleScript:FindFirstChild("Redirect");
-      assert(redirectObjectValue and redirectObjectValue:IsA("ObjectValue"), "[Dialogue Maker] Redirect object value not found.");
-
-      local redirectModuleScript = redirectObjectValue.Value;
-      assert(redirectModuleScript and redirectModuleScript:IsA("ModuleScript"), "[Dialogue Maker] Redirect object value is not a ModuleScript.");
-
-      local redirectDialogue = require(redirectModuleScript) :: Dialogue;
-      if redirectDialogue:verifyCondition() then
-
-        return redirectDialogue;
-
-      end;
-
-    else 
-
-      local children = self:getChildren();
-      for _, child in children do
-
-        if child:verifyCondition() then
-
-          return child;
-
-        end
+        return child;
 
       end
 
-    end;
+    end
 
     return nil;
 
@@ -148,11 +129,10 @@ end;
 
 function Conversation.getFromDialogue(dialogue: Dialogue): Conversation
 
-  local conversationModuleScript: ModuleScript?;
-  local currentModuleScript = dialogue.moduleScript;
+  local conversationModuleScript: ModuleScript? = dialogue.moduleScript;
   repeat
 
-    conversationModuleScript = currentModuleScript:FindFirstAncestorOfClass("ModuleScript");
+    conversationModuleScript = if conversationModuleScript then conversationModuleScript:FindFirstAncestorOfClass("ModuleScript") else nil;
 
   until not conversationModuleScript or conversationModuleScript:HasTag("DialogueMakerConversation");
 
