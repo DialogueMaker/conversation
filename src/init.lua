@@ -1,7 +1,7 @@
 --!strict
 
 local packages = script.Parent.roblox_packages;
-local DialogueMakerTypes = require(packages.dialogue_maker_types);
+local DialogueMakerTypes = require(packages.DialogueMakerTypes);
 
 type Dialogue = DialogueMakerTypes.Dialogue;
 type Conversation = DialogueMakerTypes.Conversation;
@@ -14,87 +14,40 @@ local Conversation = {
       name = nil;
     };
     theme = {
-      moduleScript = nil;
+      component = nil;
     };
-    promptRegion = {
-      basePart = nil; 
-    };
-    clickDetector = { 
-      shouldAutoCreate = false; 
-      shouldDisappearDuringConversation = true; 
-      instance = nil;
-    };
-    proximityPrompt = { 
-      shouldAutoCreate = true; 
-      instance = nil; 
-    };
-    speechBubble = {
-      shouldAutoCreate = false; 
-      button = nil;
-      billboardGUI = nil;
-      adornee = nil;
+    typewriter = {
+      canPlayerSkipDelay = nil;
+      characterDelaySeconds = nil;
+      soundTemplate = nil;
     };
   } :: ConversationSettings;
 };
 
-function Conversation.new(dialogueServerSettings: OptionalConversationSettings?, moduleScript: ModuleScript): Conversation
+export type ConstructorProperties = {
+  settings: OptionalConversationSettings?;
+  children: {Dialogue}?;
+}
 
-  local settingsChangedEvent = Instance.new("BindableEvent");
-  local settings: ConversationSettings = {
-    speaker = {
-      name = if dialogueServerSettings and dialogueServerSettings.speaker then dialogueServerSettings.speaker.name else Conversation.defaultSettings.speaker.name;
-    };
-    theme = {
-      moduleScript = if dialogueServerSettings and dialogueServerSettings.theme then dialogueServerSettings.theme.moduleScript else Conversation.defaultSettings.theme.moduleScript;
-    };
-    promptRegion = {
-      basePart = if dialogueServerSettings and dialogueServerSettings.promptRegion then dialogueServerSettings.promptRegion.basePart else Conversation.defaultSettings.promptRegion.basePart; 
-    };
-    clickDetector = { 
-      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.clickDetector and dialogueServerSettings.clickDetector.shouldAutoCreate ~= nil then dialogueServerSettings.clickDetector.shouldAutoCreate else Conversation.defaultSettings.clickDetector.shouldAutoCreate; 
-      shouldDisappearDuringConversation = if dialogueServerSettings and dialogueServerSettings.clickDetector and dialogueServerSettings.clickDetector.shouldDisappearDuringConversation ~= nil then dialogueServerSettings.clickDetector.shouldDisappearDuringConversation else Conversation.defaultSettings.clickDetector.shouldDisappearDuringConversation; 
-      instance = if dialogueServerSettings and dialogueServerSettings.clickDetector then dialogueServerSettings.clickDetector.instance else Conversation.defaultSettings.clickDetector.instance;
-    };
-    proximityPrompt = { 
-      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.proximityPrompt and dialogueServerSettings.proximityPrompt.shouldAutoCreate ~= nil then dialogueServerSettings.proximityPrompt.shouldAutoCreate else Conversation.defaultSettings.proximityPrompt.shouldAutoCreate; 
-      instance = if dialogueServerSettings and dialogueServerSettings.proximityPrompt then dialogueServerSettings.proximityPrompt.instance else Conversation.defaultSettings.proximityPrompt.instance; 
-    };
-    speechBubble = {
-      shouldAutoCreate = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.shouldAutoCreate ~= nil then dialogueServerSettings.speechBubble.shouldAutoCreate else Conversation.defaultSettings.speechBubble.shouldAutoCreate; 
-      billboardGUI = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.billboardGUI ~= nil then dialogueServerSettings.speechBubble.billboardGUI else Conversation.defaultSettings.speechBubble.billboardGUI;
-      button = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.button ~= nil then dialogueServerSettings.speechBubble.button else Conversation.defaultSettings.speechBubble.button;
-      adornee = if dialogueServerSettings and dialogueServerSettings.speechBubble and dialogueServerSettings.speechBubble.adornee ~= nil then dialogueServerSettings.speechBubble.adornee else Conversation.defaultSettings.speechBubble.adornee;
-    }
-  };
+function Conversation.new(properties: ConstructorProperties?): Conversation
 
-  local function getSettings(self: Conversation): ConversationSettings
-
-    return table.clone(settings);
-
-  end;
-
-  local function getChildren(self: Conversation): {Dialogue}
-
-    local children = {};
-    for _, child in moduleScript:GetChildren() do
-
-      if child:IsA("ModuleScript") and tonumber(child.Name) then
-
-        local dialogue = require(child) :: Dialogue;
-        table.insert(children, dialogue);
-
-      end;
-
-    end;
-
-    return children;
-
-  end;
+  local settings: ConversationSettings = if properties and properties.settings then {
+    speaker = if properties.settings.speaker then {
+      name = properties.settings.speaker.name or Conversation.defaultSettings.speaker.name;
+    } else Conversation.defaultSettings.speaker;
+    theme = if properties.settings.theme then {
+      component = properties.settings.theme.component or Conversation.defaultSettings.theme.component;
+    } else Conversation.defaultSettings.theme;
+    typewriter = if properties.settings.typewriter then {
+      canPlayerSkipDelay = properties.settings.typewriter.canPlayerSkipDelay or Conversation.defaultSettings.typewriter.canPlayerSkipDelay;
+      characterDelaySeconds = properties.settings.typewriter.characterDelaySeconds or Conversation.defaultSettings.typewriter.characterDelaySeconds;
+      soundTemplate = properties.settings.typewriter.soundTemplate or Conversation.defaultSettings.typewriter.soundTemplate;
+    } else Conversation.defaultSettings.typewriter;
+  } else Conversation.defaultSettings;
 
   local function findNextVerifiedDialogue(self: Conversation): Dialogue?
 
-    local children = self:getChildren();
-    for _, child in children do
+    for _, child in self.children do
       
       if child:verifyCondition() then
 
@@ -108,37 +61,26 @@ function Conversation.new(dialogueServerSettings: OptionalConversationSettings?,
 
   end;
 
-  local function setSettings(self: Conversation, newSettings: ConversationSettings): ()
+  local children = if properties and properties.children then properties.children else {};
 
-    settings = newSettings;
-    settingsChangedEvent:Fire(newSettings);
-
-  end;
-
-  local dialogueServer: Conversation = {
-    getChildren = getChildren;
-    getSettings = getSettings;
-    setSettings = setSettings;
+  local conversation: Conversation = {
+    type = "Conversation" :: "Conversation";
+    children = children;
+    settings = settings;
     findNextVerifiedDialogue = findNextVerifiedDialogue;
-    moduleScript = moduleScript;
   };
 
-  return dialogueServer;
+  for index, dialogue in conversation.children do
 
-end;
+    if dialogue.parent ~= conversation then
 
-function Conversation.getFromDialogue(dialogue: Dialogue): Conversation
+      conversation.children[index] = dialogue:clone({
+        parent = conversation;
+      });
+      
+    end;
 
-  local conversationModuleScript: ModuleScript? = dialogue.moduleScript;
-  repeat
-
-    conversationModuleScript = if conversationModuleScript then conversationModuleScript:FindFirstAncestorOfClass("ModuleScript") else nil;
-
-  until not conversationModuleScript or conversationModuleScript:HasTag("DialogueMakerConversation");
-
-  assert(conversationModuleScript, `[Dialogue Maker] Dialogue is missing an ancestor with a Conversation object.`);
-
-  local conversation = require(conversationModuleScript) :: Conversation;
+  end;
 
   return conversation;
 
