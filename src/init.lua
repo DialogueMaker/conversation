@@ -61,6 +61,15 @@ function Conversation.new(properties: ConstructorProperties?): Conversation
 
   end;
 
+  local function getNextVerifiedDialogue(self: Conversation): Dialogue
+
+    local nextDialogue = self:findNextVerifiedDialogue();
+    assert(nextDialogue, "No verified dialogue found in conversation.");
+
+    return nextDialogue;
+
+  end;
+
   local children = if properties and properties.children then properties.children else {};
 
   local conversation: Conversation = {
@@ -68,6 +77,7 @@ function Conversation.new(properties: ConstructorProperties?): Conversation
     children = children;
     settings = settings;
     findNextVerifiedDialogue = findNextVerifiedDialogue;
+    getNextVerifiedDialogue = getNextVerifiedDialogue;
   };
 
   for index, dialogue in conversation.children do
