@@ -29,7 +29,7 @@ export type ConstructorProperties = {
   children: {Dialogue}?;
 }
 
-function Conversation.new(properties: ConstructorProperties?): Conversation
+function Conversation.new(properties: ConstructorProperties?, children: {Dialogue}?): Conversation
 
   local settings: ConversationSettings = if properties and properties.settings then {
     speaker = if properties.settings.speaker then {
@@ -70,11 +70,9 @@ function Conversation.new(properties: ConstructorProperties?): Conversation
 
   end;
 
-  local children = if properties and properties.children then properties.children else {};
-
   local conversation: Conversation = {
     type = "Conversation" :: "Conversation";
-    children = children;
+    children = children or if properties and properties.children then properties.children else {};
     settings = settings;
     findNextVerifiedDialogue = findNextVerifiedDialogue;
     getNextVerifiedDialogue = getNextVerifiedDialogue;
