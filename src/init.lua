@@ -19,7 +19,7 @@ local Conversation = {
     typewriter = {
       canPlayerSkipDelay = nil;
       characterDelaySeconds = nil;
-      soundTemplate = nil;
+      shouldShowResponseWhileTyping = nil;
     };
   } :: ConversationSettings;
 };
@@ -33,15 +33,15 @@ function Conversation.new(properties: ConstructorProperties?, children: {Dialogu
 
   local settings: ConversationSettings = if properties and properties.settings then {
     speaker = if properties.settings.speaker then {
-      name = properties.settings.speaker.name or Conversation.defaultSettings.speaker.name;
+      name = if properties.settings.speaker.name ~= nil then properties.settings.speaker.name else Conversation.defaultSettings.speaker.name;
     } else Conversation.defaultSettings.speaker;
     theme = if properties.settings.theme then {
-      component = properties.settings.theme.component or Conversation.defaultSettings.theme.component;
+      component = if properties.settings.theme.component ~= nil then properties.settings.theme.component else Conversation.defaultSettings.theme.component;
     } else Conversation.defaultSettings.theme;
     typewriter = if properties.settings.typewriter then {
-      canPlayerSkipDelay = properties.settings.typewriter.canPlayerSkipDelay or Conversation.defaultSettings.typewriter.canPlayerSkipDelay;
-      characterDelaySeconds = properties.settings.typewriter.characterDelaySeconds or Conversation.defaultSettings.typewriter.characterDelaySeconds;
-      soundTemplate = properties.settings.typewriter.soundTemplate or Conversation.defaultSettings.typewriter.soundTemplate;
+      canPlayerSkipDelay = if properties.settings.typewriter.canPlayerSkipDelay ~= nil then properties.settings.typewriter.canPlayerSkipDelay else Conversation.defaultSettings.typewriter.canPlayerSkipDelay;
+      characterDelaySeconds = if properties.settings.typewriter.characterDelaySeconds ~= nil then properties.settings.typewriter.characterDelaySeconds else Conversation.defaultSettings.typewriter.characterDelaySeconds;
+      shouldShowResponseWhileTyping = if properties.settings.typewriter.shouldShowResponseWhileTyping ~= nil then properties.settings.typewriter.shouldShowResponseWhileTyping else Conversation.defaultSettings.typewriter.shouldShowResponseWhileTyping;
     } else Conversation.defaultSettings.typewriter;
   } else Conversation.defaultSettings;
 
